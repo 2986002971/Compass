@@ -1,0 +1,15 @@
+[project]
+authors = ["Horned_Axe <horned_axe@proton.me>"]
+channels = ["conda-forge"]
+description = "Add a short description here"
+name = "compass"
+platforms = ["linux-64", "win-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+ultralytics = ">=8.3.3,<9"
+flask = ">=3.0.3,<4"
+flask-socketio = ">=5.3.6,<6"
+pyopenssl = ">=24.2.1,<25"

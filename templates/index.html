@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compass</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        #eyes {
+            display: flex;
+            flex-direction: row;
+            gap: 100px;
+        }
+        .eye {
+            width: 250px;
+            height: 200px;
+            background-color: #00BFFF;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .eye.smile {
+            height: 100px;
+            border-radius: 125px 125px 0 0;
+        }       
+    </style>
+</head>
+<body>
+    <div id="eyes">
+        <div class="eye"></div>
+        <div class="eye"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        const socket = io('https://' + window.location.hostname + ':5000');
+        let isRecording = false;
+        let mediaRecorder;
+        let audioChunks = [];
+
+        function blink() {
+            const eyes = document.querySelectorAll('.eye');
+            eyes.forEach(eye => {
+                const originalHeight = eye.offsetHeight;
+                eye.style.height = '2px';
+                setTimeout(() => {
+                    eye.style.height = `${originalHeight}px`;
+                }, 150);
+            });
+        }
+
+        function changeEyeShape(isSmiling) {
+            const eyes = document.querySelectorAll('.eye');
+            eyes.forEach(eye => {
+                if (isSmiling) {
+                    eye.classList.add("smile");
+                } else {
+                    eye.classList.remove("smile");
+                }
+            });
+            resizeEyes();
+        }
+
+        socket.on('connect', () => {
+            console.log('已连接到服务器');
+        });
+
+        socket.on('blink', (data) => {
+            blink();
+        });
+
+        document.body.addEventListener('click', () => {
+            if (!isRecording) {
+                startRecording();
+            } else {
+                stopRecording();
+            }
+        });
+
+        function startRecording() {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    console.log('成功获取音频流');
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.start();
+
+                    mediaRecorder.ondataavailable = (event) => {
+                        audioChunks.push(event.data);
+                    };
+
+                    isRecording = true;
+                    changeEyeShape(true);
+                })
+                .catch(error => {
+                    console.error('无法访问麦克风:', error);
+                    alert('无法访问麦克风。错误信息: ' + error.message);
+                });
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state === "recording") {
+                mediaRecorder.stop();
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks);
+                    socket.emit('audio', audioBlob);
+                    audioChunks = [];
+                };
+                isRecording = false;
+                changeEyeShape(false);
+            }
+        }
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen mode: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        window.addEventListener("load", toggleFullScreen);
+        document.addEventListener("dblclick", toggleFullScreen);
+
+        function resizeEyes() {
+            const eyesContainer = document.getElementById("eyes");
+            const eyes = document.querySelectorAll(".eye");
+            const containerWidth = window.innerWidth;
+            const containerHeight = window.innerHeight;
+            const eyeWidth = Math.min(containerWidth / 2, containerHeight / 1.5);
+            const eyeHeight = eyeWidth * 0.8; // 保持宽高比例为 1.25:1
+
+            eyes.forEach(eye => {
+                eye.style.width = `${eyeWidth}px`;
+                if (!eye.classList.contains('smile')) {
+                    eye.style.height = `${eyeHeight}px`;
+                    eye.style.borderRadius = '50%';
+                } else {
+                    eye.style.height = `${eyeHeight / 2}px`;
+                    eye.style.borderRadius = `${eyeWidth / 2}px ${eyeWidth / 2}px 0 0`;
+                }
+            });
+
+            eyesContainer.style.gap = `${eyeWidth / 2}px`; // 调整间距
+        }
+
+        window.addEventListener('load', resizeEyes);
+        window.addEventListener('resize', resizeEyes);
+    </script>
+</body>
+</html>
