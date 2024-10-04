@@ -1,6 +1,6 @@
 [project]
 authors = ["Horned_Axe <horned_axe@proton.me>"]
-channels = ["conda-forge"]
+channels = ["nvidia", "conda-forge", "pytorch"]
 description = "Add a short description here"
 name = "compass"
 platforms = ["linux-64", "win-64"]
@@ -9,7 +9,14 @@ version = "0.1.0"
 [tasks]
 
 [dependencies]
+python = "3.12"
 ultralytics = ">=8.3.3,<9"
 flask = ">=3.0.3,<4"
 flask-socketio = ">=5.3.6,<6"
 pyopenssl = ">=24.2.1,<25"
+pyserial = ">=3.5,<4"
+opencv = ">=4.9.0,<5"
+cuda = {version = "*", channel = "nvidia"}
+pytorch = {version = "*", channel = "pytorch"}
+torchvision = {version = "*", channel = "pytorch"}
+pytorch-cuda = {version = "*", channel = "pytorch"}

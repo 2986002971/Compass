@@ -2,3 +2,5 @@
 .pixi
 *.egg-info
 *.pem
+*.pyc
+*.pt
