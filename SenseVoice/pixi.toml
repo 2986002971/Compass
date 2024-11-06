@@ -1,0 +1,31 @@
+[project]
+authors = ["Horned_Axe <horned_axe@proton.me>"]
+channels = ["nvidia", "conda-forge", "pytorch"]
+description = "Add a short description here"
+name = "SenseVoice"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+python = "3.12"
+setuptools = "*"
+cuda = {version = "*", channel = "nvidia"}
+pytorch = {version = "<=2.3", channel = "pytorch"}
+torchaudio = {version = "*", channel = "pytorch"}
+pytorch-cuda = {version = "*", channel = "pytorch"}
+numpy = "<=1.26.4"
+fastapi = "0.111"
+fastapi-cli = "*"
+gradio = "*"
+grpclib = "*"
+grpcio-tools = "*"
+protobuf = "4.25.*"
+pygame = "*"
+
+[pypi-dependencies]
+modelscope = "*"
+huggingface = "*"
+huggingface_hub = "*"
+funasr = ">=1.1.3"
