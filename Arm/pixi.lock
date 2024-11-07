@@ -265,6 +265,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/py-opencv-4.10.0-qt6_py312h12792fe_610.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pycparser-2.22-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pyparsing-3.2.0-pyhd8ed1ab_1.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/pyserial-3.5-pyhd8ed1ab_0.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/noarch/pysocks-1.7.1-pyha2e5f31_6.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/linux-64/python-3.12.0-hab00c5b_0_cpython.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/python-dateutil-2.9.0-pyhd8ed1ab_0.conda
@@ -524,6 +525,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/win-64/py-opencv-4.10.0-qt6_py312h21d14a3_610.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pycparser-2.22-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pyparsing-3.2.0-pyhd8ed1ab_1.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/pyserial-3.5-pyhd8ed1ab_0.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/noarch/pysocks-1.7.1-pyh0701188_6.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/win-64/python-3.12.0-h2628c8c_0_cpython.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/python-dateutil-2.9.0-pyhd8ed1ab_0.conda
@@ -7704,6 +7706,21 @@ packages:
   license_family: MIT
   size: 92444
   timestamp: 1728880549923
+- kind: conda
+  name: pyserial
+  version: '3.5'
+  build: pyhd8ed1ab_0
+  subdir: noarch
+  noarch: python
+  url: https://conda.anaconda.org/conda-forge/noarch/pyserial-3.5-pyhd8ed1ab_0.tar.bz2
+  sha256: 8f2cae847359a42b2d702537816fe307d0cf2d810fc93af4361d3e7d4b54cf14
+  md5: 55909727c94d1cb82fed1ee41ddd8423
+  depends:
+  - python >=2
+  license: BSD-3-Clause
+  license_family: BSD
+  size: 65964
+  timestamp: 1606128757003
 - kind: conda
   name: pysocks
   version: 1.7.1

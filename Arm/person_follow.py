@@ -2,7 +2,6 @@
 # coding: utf-8
 import cv2 as cv
 from ultralytics import YOLO
-
 from utils.Arm_Lib import Arm_Device
 from utils.PID import PositionalPID
 
@@ -16,7 +15,7 @@ class face_follow:
         self.b = 0
         self.xservo_pid = PositionalPID(0.25, 0.1, 0.05)
         self.yservo_pid = PositionalPID(0.25, 0.1, 0.05)
-        self.model = YOLO("./models/yolo11m-pose.pt")
+        self.model = YOLO("./models/yolov8s-pose.pt")
         self.conf_threshold = 0.5
 
     def follow_function(self, img):

@@ -7,6 +7,7 @@ import wave
 from contextlib import asynccontextmanager
 from datetime import datetime
 
+import aiohttp
 import uvicorn
 from fastapi import FastAPI, Request, WebSocket
 from fastapi.responses import HTMLResponse
@@ -26,6 +27,38 @@ templates = Jinja2Templates(directory="templates")
 active_connections = set()
 transcriber = Transcriber()
 tts_client = TTSClient()
+
+# 添加llama服务器的配置
+LLAMA_URL = "http://localhost:8080/v1/chat/completions"
+SYSTEM_PROMPT = """你是Compass,一个智能机械臂助手。你性格友好,乐于助人,会用简洁清晰的语言回答问题。
+你了解自己是一个宠物机器人，可以陪伴人类，与人类交流。在回答时要体现出这个身份特征。
+请用简短的语句回应,避免过长的回复。"""
+
+
+async def get_llm_response(text: str) -> str:
+    """调用LLM获取回复"""
+    messages = [
+        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "user", "content": text},
+    ]
+
+    async with aiohttp.ClientSession() as session:
+        async with session.post(
+            LLAMA_URL,
+            json={
+                "messages": messages,
+                "model": "default",  # 使用默认加载的模型
+                "temperature": 0.7,
+                "max_tokens": 2000,  # 限制回复长度
+            },
+            headers={"Content-Type": "application/json"},
+        ) as response:
+            if response.status == 200:
+                result = await response.json()
+                return result["choices"][0]["message"]["content"]
+            else:
+                print(f"LLM请求失败: {response.status}")
+                return "抱歉,我现在无法正常回答。请稍后再试。"
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -62,12 +95,15 @@ async def websocket_endpoint(websocket: WebSocket):
                     # 如果转录文本为空或者太短，使用默认回复
                     if not text or len(text.strip()) < 2:
                         text = "抱歉，我没有听清楚，请再说一遍。"
-                        print(f"使用默认回复: {text}")
+                    else:
+                        # 调用LLM获取回复
+                        text = await get_llm_response(text)
+                    print(f"LLM回复: {text}")
 
                     # 合成音频
                     audio_data = b""
                     for response in tts_client.synthesize_speech_stream(
-                        text, speaker_id="中文女"
+                        text, speaker_id="中文男"
                     ):
                         audio_data += response
 
